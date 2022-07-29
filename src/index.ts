@@ -1,7 +1,7 @@
 import { SoundFont2 } from "soundfont2";
 import "./dsp";
 import { generators } from "./generators";
-import { normalizePermille, tc2s } from './util';
+import { normalizePermille, tc2s } from "./util";
 
 export async function loadSoundfont(url) {
   // load some sf2 file into an array buffer:
@@ -195,7 +195,6 @@ export const startPresetNote = (ctx, preset, midi, time = ctx.currentTime) => {
     releases.forEach((release) => release(end));
   };
 };
-
 
 /*
 TODO:
