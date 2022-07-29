@@ -3,6 +3,10 @@ import "./dsp";
 import { generators } from "./generators";
 import { normalizePermille, tc2s } from "./util";
 
+export * from "./generators";
+export * from "./util";
+export * from "./dsp";
+
 export async function loadSoundfont(url) {
   // load some sf2 file into an array buffer:
   const buffer = await fetch(url).then((res) => res.arrayBuffer());
