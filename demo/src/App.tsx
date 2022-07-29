@@ -15,9 +15,8 @@ function App() {
     name && loadSoundfont("./soundfonts/" + name + ".sf2").then(setLoaded);
   }, [name]);
   return (
-    <div>
-      <h1 className="text-3xl">sfmuato demo</h1>
-      <p>This is sfmuato</p>
+    <div className="space-y-4">
+      <h1 className="text-3xl">sfumato demo</h1>
       <select
         className="bg-slate-500 text-white p-4 text-xl"
         value={name}
@@ -27,7 +26,7 @@ function App() {
           <option key={font}>{font}</option>
         ))}
       </select>
-      <section className="mt-2">
+      <section>
         {loaded?.presets.map((preset, i) => (
           <button
             key={i}
