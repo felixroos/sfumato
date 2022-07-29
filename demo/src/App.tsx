@@ -9,26 +9,37 @@ const fonts = [
 ];
 
 function App() {
-  const [font, setFont] = useState(fonts[0]);
+  const [name, setName] = useState(fonts[0]);
+  const [loaded, setLoaded] = useState<any>();
   useEffect(() => {
-    loadSoundfont("./soundfonts/" + font + ".sf2").then((sf) => {
-      console.log("loaded soundfont", sf);
-    });
-  }, [font]);
+    name && loadSoundfont("./soundfonts/" + name + ".sf2").then(setLoaded);
+  }, [name]);
   return (
     <div>
       <h1 className="text-3xl">sfmuato demo</h1>
       <p>This is sfmuato</p>
       <select
         className="bg-slate-500 text-white p-4 text-xl"
-        value={font}
-        onChange={(e) => setFont(e.target.value)}
+        value={name}
+        onChange={(e) => setName(e.target.value)}
       >
         {fonts.map((font) => (
           <option key={font}>{font}</option>
         ))}
       </select>
-      {font && <p>{font}</p>}
+      <section className="mt-2">
+        {loaded?.presets.map((preset, i) => (
+          <button
+            key={i}
+            className="p-2 text-xl bg-slate-800 hover:bg-slate-700 rounded-md mb-1 mr-1"
+            onClick={() => {
+              console.log("BOOM", preset);
+            }}
+          >
+            {preset.header.name}
+          </button>
+        ))}
+      </section>
     </div>
   );
 }
