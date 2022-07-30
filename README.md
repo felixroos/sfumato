@@ -10,5 +10,6 @@ It's still a work in progress! Roadmap will follow soon
 
 ## Links
 
+- [DEMO](https://felixroos.github.io/sfumato/)
 - [GitHub](https://github.com/felixroos/sfumato)
 - [Blog Post](https://loophole-letters.vercel.app/soundfonts)
