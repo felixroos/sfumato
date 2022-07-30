@@ -1,11 +1,12 @@
 import { SoundFont2 } from "soundfont2";
 import "./dsp";
 import { generators } from "./generators";
+import { Instrument, InstrumentZone, Preset, PresetZone } from "./types.d";
 import { normalizePermille, tc2s } from "./util";
 
+export * from "./dsp";
 export * from "./generators";
 export * from "./util";
-export * from "./dsp";
 
 export async function loadSoundfont(url) {
   // load some sf2 file into an array buffer:
@@ -155,16 +156,30 @@ export function readableGenerators(unreadable) {
     })
   );
 }
+export const isActiveZone = (zone: PresetZone | InstrumentZone, midi: number) =>
+  !zone.keyRange || (zone.keyRange.lo <= midi && midi <= zone.keyRange.hi);
 
-export const getActiveZones = (preset, midi) => {
+export const mergeGenerators = (
+  preset: Preset,
+  instrument: Instrument,
+  izone: InstrumentZone,
+  pzone: PresetZone
+) => {
+  Object.fromEntries(
+    Object.entries(generators).map(([index, key]) => [
+      key,
+      getGeneratorValue(index, izone, instrument, pzone, preset),
+    ])
+  );
+};
+
+export const getActiveZones = (preset: Preset, midi) => {
   // console.log('preset', preset);
-  const isActiveZone = (zone) =>
-    !zone.keyRange || (zone.keyRange.lo <= midi && midi <= zone.keyRange.hi);
   const activeZones = preset.zones
-    .filter((pzone) => isActiveZone(pzone) && pzone.instrument)
+    .filter((pzone) => isActiveZone(pzone, midi) && pzone.instrument)
     .map((pzone) =>
       pzone.instrument.zones
-        .filter((izone) => isActiveZone(izone))
+        .filter((izone) => isActiveZone(izone, midi))
         .map((izone) => ({
           ...izone,
           presetZoneGenerators: pzone.generators,

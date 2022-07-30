@@ -1,4 +1,5 @@
 import { DEFAULT_GENERATOR_VALUES } from "soundfont2";
+import { Instrument, InstrumentZone, Preset, PresetZone } from "./types.d";
 
 // http://www.synthfont.com/SFSPEC21.PDF page 38
 export const generators = {
@@ -71,3 +72,56 @@ export const defaultGeneratorValues = Object.fromEntries(
     value,
   ])
 );
+
+// export const getGeneratorValue(generator: string, preset, ) {
+
+export const getGeneratorValue = (
+  index: number,
+  izone: InstrumentZone,
+  instrument: Instrument,
+  pzone: PresetZone,
+  preset: Preset
+): number => {
+  /*
+8.5 Precedence and Absolute and Relative values.
+Most SoundFont generators are available at both the Instrument and Preset Levels, as well as having a default value.
+Generators at the Instrument Level are considered “absolute” and determine an actual physical value for the associated
+synthesis parameter, which is used instead of the default. For example, a value of 1200 for the attackVolEnv generator
+would produce an absolute time of 1200 timecents or 2 seconds of attack time for the volume envelope, instead of the
+default value of -12000 timecents or 1 msec.
+Generators at the Preset Level are instead considered “relative” and additive to all the default or instrument level generators
+within the Preset Zone. For example, a value of 2400 timecents for the attackVolEnv generator in a preset zone containing
+an instrument with two zones, one with the default attackVelEnv and one with an absolute attackVolEnv generator value of
+1200 timecents would cause the default zone to actually have a value of -9600 timecents or 4 msec, and the other to have a
+value of 3600 timecents or 8 seconds attack time.
+  */
+  const defaultValue = DEFAULT_GENERATOR_VALUES[index];
+  if (typeof defaultValue !== "number") {
+    throw new Error(`no default value found for generator with index ${index}`);
+  }
+  // save generators to dedicated variables to make typescript happy
+  const izoneGenerator = izone.generators[index];
+  const izoneGlobalGenerator = instrument.globalZone?.generators?.[index];
+
+  const pzoneGenerator = pzone?.generators?.[index];
+  const pzoneGlobalGenerator = preset.globalZone?.generators?.[index];
+  const izoneValue =
+    izoneGenerator && "value" in izoneGenerator
+      ? izoneGenerator.value
+      : undefined;
+  const izoneGlobalValue =
+    izoneGlobalGenerator && "value" in izoneGlobalGenerator
+      ? izoneGlobalGenerator.value
+      : undefined;
+  const pzoneValue =
+    pzoneGenerator && "value" in pzoneGenerator
+      ? pzoneGenerator.value
+      : undefined;
+  const pzoneGlobalValue =
+    pzoneGlobalGenerator && "value" in pzoneGlobalGenerator
+      ? pzoneGlobalGenerator.value
+      : undefined;
+  const absoluteValue = izoneValue ?? izoneGlobalValue ?? defaultValue;
+  const relativeValue = pzoneValue ?? pzoneGlobalValue ?? 0;
+  return absoluteValue + relativeValue;
+};
