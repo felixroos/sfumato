@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build --base=/sfumato",
     "preview": "vite preview",
     "deploy": "npm run build && gh-pages -d dist"
   },
