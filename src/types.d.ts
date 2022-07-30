@@ -4,12 +4,12 @@ export interface Sample {
     end: number;
     endLoop: number;
     link: number;
-    originalPitch: string;
-    pitchCorrection: string;
-    sampleRate: string;
-    start: string;
-    startLoop: string;
-    type: string;
+    originalPitch: number;
+    pitchCorrection: number;
+    sampleRate: number;
+    start: number;
+    startLoop: number;
+    type: number;
   };
   data: Int16Array;
 }
@@ -26,8 +26,8 @@ declare interface ValueGenerator {
 declare type Generator = RangeGenerator | ValueGenerator;
 
 declare interface Zone {
-  keyRange: RangeGenerator | undefined;
-  modulators: {};
+  keyRange?: RangeGenerator | undefined;
+  modulators?: {};
   generators: {
     [key: number]: Generator;
   };
@@ -38,15 +38,10 @@ export interface InstrumentZone extends Zone {
 }
 
 export interface Instrument {
-  globalZone: Zone;
+  globalZone?: Zone;
   header: {
-    name: number;
+    name: string;
     bagIndex: number;
-    bank: number;
-    genre: number;
-    library: number;
-    morphology: number;
-    preset: number;
   };
   zones: InstrumentZone[];
 }
@@ -56,7 +51,7 @@ export interface PresetZone extends Zone {
 }
 
 export interface Preset {
-  globalZone: Zone;
+  globalZone?: Zone;
   header: {
     name: string;
     bagIndex: number;
