@@ -125,3 +125,37 @@ value of 3600 timecents or 8 seconds attack time.
   const relativeValue = pzoneValue ?? pzoneGlobalValue ?? 0;
   return absoluteValue + relativeValue;
 };
+
+export const hasDefaultValue = (index) => {
+  return DEFAULT_GENERATOR_VALUES[index] !== undefined;
+};
+
+export const getGeneratorValues = (
+  izone: InstrumentZone,
+  pzone: PresetZone,
+  preset: Preset
+) => {
+  return Object.fromEntries(
+    Array.from(
+      new Set(
+        [
+          Object.keys(preset.globalZone?.generators ?? {}),
+          Object.keys(pzone.generators),
+          Object.keys(pzone.instrument.globalZone?.generators ?? {}),
+          Object.keys(izone.generators),
+        ].flat()
+      )
+    )
+      .filter(hasDefaultValue)
+      .map((key) => [
+        generators[key],
+        getGeneratorValue(
+          parseInt(key),
+          izone,
+          pzone.instrument,
+          pzone,
+          preset
+        ),
+      ])
+  );
+};

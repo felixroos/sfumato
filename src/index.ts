@@ -1,6 +1,10 @@
 import { SoundFont2 } from "soundfont2";
 import "./dsp";
-import { generators } from "./generators";
+import {
+  generators,
+  getGeneratorValue,
+  getGeneratorValues,
+} from "./generators";
 import { Instrument, InstrumentZone, Preset, PresetZone } from "./types.d";
 import { normalizePermille, tc2s } from "./util";
 
@@ -168,7 +172,7 @@ export const mergeGenerators = (
   Object.fromEntries(
     Object.entries(generators).map(([index, key]) => [
       key,
-      getGeneratorValue(index, izone, instrument, pzone, preset),
+      getGeneratorValue(parseInt(index), izone, instrument, pzone, preset),
     ])
   );
 };
@@ -177,23 +181,18 @@ export const getActiveZones = (preset: Preset, midi) => {
   // console.log('preset', preset);
   const activeZones = preset.zones
     .filter((pzone) => isActiveZone(pzone, midi) && pzone.instrument)
-    .map((pzone) =>
-      pzone.instrument.zones
+    .map((pzone) => {
+      return pzone.instrument.zones
         .filter((izone) => isActiveZone(izone, midi))
-        .map((izone) => ({
-          ...izone,
-          presetZoneGenerators: pzone.generators,
-          instrumentZoneGenerators: izone.generators,
-          presetZone: pzone,
-          mergedGenerators: readableGenerators({
-            ...izone.generators,
-            ...(pzone.instrument.globalZone?.generators || {}),
-            // TODO pzone generators are relative to izone => add together instead of overwriting!
-            ...(preset.globalZone?.generators || {}),
-            ...pzone.generators,
-          }),
-        }))
-    )
+        .map((izone) => {
+          const mergedGenerators = getGeneratorValues(izone, pzone, preset);
+          // console.log("generators", mergedGenerators);
+          return {
+            ...izone,
+            mergedGenerators: mergedGenerators,
+          };
+        });
+    })
     .flat();
   // console.log('activeZones', activeZones);
   return activeZones;
@@ -214,39 +213,3 @@ export const startPresetNote = (ctx, preset, midi, time = ctx.currentTime) => {
     releases.forEach((release) => release(end));
   };
 };
-
-/*
-TODO:
-8.5 Precedence and Absolute and Relative values.
-Most SoundFont generators are available at both the Instrument and Preset Levels, as well as having a default value.
-Generators at the Instrument Level are considered “absolute” and determine an actual physical value for the associated
-synthesis parameter, which is used instead of the default. For example, a value of 1200 for the attackVolEnv generator
-would produce an absolute time of 1200 timecents or 2 seconds of attack time for the volume envelope, instead of the
-default value of -12000 timecents or 1 msec.
-Generators at the Preset Level are instead considered “relative” and additive to all the default or instrument level generators
-within the Preset Zone. For example, a value of 2400 timecents for the attackVolEnv generator in a preset zone containing
-an instrument with two zones, one with the default attackVelEnv and one with an absolute attackVolEnv generator value of
-1200 timecents would cause the default zone to actually have a value of -9600 timecents or 4 msec, and the other to have a
-value of 3600 timecents or 8 seconds attack time.
-There are some generators that are not available at the Preset Level. These are:
-# Name
-0 startAddrsOffset
-1 endAddrsOffset
-2 startloopAddrsOffset
-3 endloopAddrsOffset
-4 startAddrsCoarseOffset
-12 endAddrsCoarseOffset
-45 startloopAddrsCoarseOffset
-46 keynum
-47 velocity
-50 endloopAddrsCoarseOffset
-54 sampleModes
-57 exclusiveClass
-58 overridingRootKey
-If these generators are encountered in the Preset Level, they should be ignored.
-The effect of modulators on a given destination is always relative to the generator value at the Instrument level. However
-modulators may supersede or add to other modulators depending on their position within the hierarchy. Please see section
-9.5 for details on the Modulator implementation and the hierarchical details. 
-
-
-*/
