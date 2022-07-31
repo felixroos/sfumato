@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { loadSoundfont, startPresetNote } from "../../src";
 import { toMidi } from "../../src/util";
+import Claviature from "./Claviature";
 
 const fonts = [
   "Donkey Kong Country 2014",
@@ -23,7 +24,10 @@ function App() {
       <p>
         sfumato is a library to use soundfonts on the web. 1. select soundfont
         2. press preset button to hear the sound. For more info, go to the{" "}
-        <a className="text-green-500" href="https://github.com/felixroos/sfumato#sfumato">
+        <a
+          className="text-green-500"
+          href="https://github.com/felixroos/sfumato#sfumato"
+        >
           sfumato github repo
         </a>
       </p>
@@ -36,6 +40,7 @@ function App() {
           <option key={font}>{font}</option>
         ))}
       </select>
+      <Claviature options={{ range: ["A1", "C4"] }} />
       <section>
         {loaded?.presets.map((preset, i) => (
           <button

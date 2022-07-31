@@ -10,6 +10,7 @@
     "deploy": "npm run build && gh-pages -d dist"
   },
   "dependencies": {
+    "claviature": "^0.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
