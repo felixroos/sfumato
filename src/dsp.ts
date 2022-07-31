@@ -10,7 +10,7 @@ if (typeof AudioParam !== "undefined") {
     sustain,
     release
   ) {
-    console.log("A", attack, "H", hold, "D", decay, "S", sustain, "R", release);
+    // console.log("A", attack, "H", hold, "D", decay, "S", sustain, "R", release);
     let t = time;
     this.setValueAtTime(min, time); // origin time
     // delay
@@ -27,7 +27,7 @@ if (typeof AudioParam !== "undefined") {
     // decay
     t += decay;
     this.linearRampToValueAtTime(sustain * max, t);
-    console.log("sustain", sustain);
+    // console.log("sustain", sustain);
 
     /*
 When 96 dB (0.04) of attenuation is reached in the final gain amplifier, an abrupt jump to zero gain (infinite dB

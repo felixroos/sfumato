@@ -86,10 +86,10 @@ export function applyOptions(ctx, source, options) {
     (k) => !["name", "instrument", "keyRange", "sampleID", "end"].includes(k)
   );
   if (unimplemented.length) {
-    console.warn(
+    /*     console.warn(
       "unimplemented options:",
       Object.fromEntries(unimplemented.map((key) => [key, rest[key]]))
-    );
+    ); */
   }
   const vol = ctx.createGain();
   source.connect(vol);
