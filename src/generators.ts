@@ -1,76 +1,73 @@
-import { DEFAULT_GENERATOR_VALUES } from "soundfont2";
-import { Instrument, InstrumentZone, Preset, PresetZone } from "./types.d";
+import { DEFAULT_GENERATOR_VALUES } from 'soundfont2';
+import { Instrument, InstrumentZone, Preset, PresetZone } from './types.d';
 
 // http://www.synthfont.com/SFSPEC21.PDF page 38
 export const generators = {
-  0: "startAddrOffset",
-  1: "endAddrOffset",
-  2: "startloopAddrsOffset",
-  3: "endloopAddrsOffset",
-  4: "startAddrsCoarseOffset",
-  5: "modLfoToPitch",
-  6: "vibLfoToPitch",
-  7: "modEnvToPitch",
-  8: "initialFilterFc",
-  9: "initialFilterQ",
-  10: "modLfoToFilterFc",
-  11: "modEnvToFilterFc",
-  12: "endAddrsCoarseOffset",
-  13: "modLfoToVolume",
-  14: "unused1",
-  15: "chorusEffectsSend",
-  16: "reverbEffectsSend",
-  17: "pan",
-  18: "unused2",
-  19: "unused3",
-  20: "unused4",
-  21: "delayModLFO",
-  22: "freqModLFO",
-  23: "delayVibLFO",
-  24: "freqVibLFO",
-  25: "delayModEnv", // timecents: delay until attackphase starts. default: -12000
-  26: "attackModEnv", // timecents: attack time. default: -12000
-  27: "holdModEnv", // timecents: hold time. default: -12000
-  28: "decayModEnv", // timecents: decay time. default: -12000
-  29: "sustainModEnv", // in 0.1% units: sustain level. default: 0 = full level, per mille, clamp(0, 1000),
-  30: "releaseModEnv", // timecents: decay time. default: -12000
-  31: "keyNumToModEnvHold",
-  32: "keyNumToModEnvDecay",
-  33: "delayVolEnv",
-  34: "attackVolEnv",
-  35: "holdVolEnv",
-  36: "decayVolEnv",
-  37: "sustainVolEnv",
-  38: "releaseVolEnv",
-  39: "keyNumToVolEnvHold",
-  40: "keyNumToVolEnvDecay",
-  41: "instrument",
-  42: "reserved1",
-  43: "keyRange",
-  44: "velRange",
-  45: "startloopAddrsCoarseOffset",
-  46: "keyNum",
-  47: "velocity",
-  48: "initialAttenuation",
-  49: "reserved2",
-  50: "endloopAddrsCoarseOffset",
-  51: "coarseTune",
-  52: "fineTune",
-  53: "sampleID",
-  54: "sampleModes",
-  55: "reserved3",
-  56: "scaleTuning",
-  57: "exclusiveClass",
-  58: "overridingRootKey",
-  59: "unused5",
-  60: "endOper",
+  0: 'startAddrOffset',
+  1: 'endAddrOffset',
+  2: 'startloopAddrsOffset',
+  3: 'endloopAddrsOffset',
+  4: 'startAddrsCoarseOffset',
+  5: 'modLfoToPitch',
+  6: 'vibLfoToPitch',
+  7: 'modEnvToPitch',
+  8: 'initialFilterFc',
+  9: 'initialFilterQ',
+  10: 'modLfoToFilterFc',
+  11: 'modEnvToFilterFc',
+  12: 'endAddrsCoarseOffset',
+  13: 'modLfoToVolume',
+  14: 'unused1',
+  15: 'chorusEffectsSend',
+  16: 'reverbEffectsSend',
+  17: 'pan',
+  18: 'unused2',
+  19: 'unused3',
+  20: 'unused4',
+  21: 'delayModLFO',
+  22: 'freqModLFO',
+  23: 'delayVibLFO',
+  24: 'freqVibLFO',
+  25: 'delayModEnv', // timecents: delay until attackphase starts. default: -12000
+  26: 'attackModEnv', // timecents: attack time. default: -12000
+  27: 'holdModEnv', // timecents: hold time. default: -12000
+  28: 'decayModEnv', // timecents: decay time. default: -12000
+  29: 'sustainModEnv', // in 0.1% units: sustain level. default: 0 = full level, per mille, clamp(0, 1000),
+  30: 'releaseModEnv', // timecents: decay time. default: -12000
+  31: 'keyNumToModEnvHold',
+  32: 'keyNumToModEnvDecay',
+  33: 'delayVolEnv',
+  34: 'attackVolEnv',
+  35: 'holdVolEnv',
+  36: 'decayVolEnv',
+  37: 'sustainVolEnv',
+  38: 'releaseVolEnv',
+  39: 'keyNumToVolEnvHold',
+  40: 'keyNumToVolEnvDecay',
+  41: 'instrument',
+  42: 'reserved1',
+  43: 'keyRange',
+  44: 'velRange',
+  45: 'startloopAddrsCoarseOffset',
+  46: 'keyNum',
+  47: 'velocity',
+  48: 'initialAttenuation',
+  49: 'reserved2',
+  50: 'endloopAddrsCoarseOffset',
+  51: 'coarseTune',
+  52: 'fineTune',
+  53: 'sampleID',
+  54: 'sampleModes',
+  55: 'reserved3',
+  56: 'scaleTuning',
+  57: 'exclusiveClass',
+  58: 'overridingRootKey',
+  59: 'unused5',
+  60: 'endOper',
 };
 
 export const defaultGeneratorValues = Object.fromEntries(
-  Object.entries(DEFAULT_GENERATOR_VALUES).map(([key, value]) => [
-    generators[key],
-    value,
-  ])
+  Object.entries(DEFAULT_GENERATOR_VALUES).map(([key, value]) => [generators[key], value]),
 );
 
 // export const getGeneratorValue(generator: string, preset, ) {
@@ -80,7 +77,7 @@ export const getGeneratorValue = (
   izone: InstrumentZone,
   instrument: Instrument,
   pzone: PresetZone,
-  preset: Preset
+  preset: Preset,
 ): number => {
   /*
 8.5 Precedence and Absolute and Relative values.
@@ -96,7 +93,7 @@ an instrument with two zones, one with the default attackVelEnv and one with an 
 value of 3600 timecents or 8 seconds attack time.
   */
   const defaultValue = DEFAULT_GENERATOR_VALUES[index];
-  if (typeof defaultValue !== "number") {
+  if (typeof defaultValue !== 'number') {
     throw new Error(`no default value found for generator with index ${index}`);
   }
   // save generators to dedicated variables to make typescript happy
@@ -105,36 +102,26 @@ value of 3600 timecents or 8 seconds attack time.
 
   const pzoneGenerator = pzone?.generators?.[index];
   const pzoneGlobalGenerator = preset.globalZone?.generators?.[index];
-  const izoneValue =
-    izoneGenerator && "value" in izoneGenerator
-      ? izoneGenerator.value
-      : undefined;
+  const izoneValue = izoneGenerator && 'value' in izoneGenerator ? izoneGenerator.value : undefined;
   const izoneGlobalValue =
-    izoneGlobalGenerator && "value" in izoneGlobalGenerator
-      ? izoneGlobalGenerator.value
-      : undefined;
-  const pzoneValue =
-    pzoneGenerator && "value" in pzoneGenerator
-      ? pzoneGenerator.value
-      : undefined;
+    izoneGlobalGenerator && 'value' in izoneGlobalGenerator ? izoneGlobalGenerator.value : undefined;
+  const pzoneValue = pzoneGenerator && 'value' in pzoneGenerator ? pzoneGenerator.value : undefined;
   const pzoneGlobalValue =
-    pzoneGlobalGenerator && "value" in pzoneGlobalGenerator
-      ? pzoneGlobalGenerator.value
-      : undefined;
+    pzoneGlobalGenerator && 'value' in pzoneGlobalGenerator ? pzoneGlobalGenerator.value : undefined;
   const absoluteValue = izoneValue ?? izoneGlobalValue ?? defaultValue;
   const relativeValue = pzoneValue ?? pzoneGlobalValue ?? 0;
+  /* if (index === 38) {
+    console.log('get 38', absoluteValue, relativeValue);
+  } */
   return absoluteValue + relativeValue;
 };
 
 export const hasDefaultValue = (index) => {
   return DEFAULT_GENERATOR_VALUES[index] !== undefined;
 };
+// console.log('DEFAULT_GENERATOR_VALUES',DEFAULT_GENERATOR_VALUES);
 
-export const getGeneratorValues = (
-  izone: InstrumentZone,
-  pzone: PresetZone,
-  preset: Preset
-) => {
+export const getGeneratorValues = (izone: InstrumentZone, pzone: PresetZone, preset: Preset) => {
   return Object.fromEntries(
     Array.from(
       new Set(
@@ -143,19 +130,10 @@ export const getGeneratorValues = (
           Object.keys(pzone.generators),
           Object.keys(pzone.instrument.globalZone?.generators ?? {}),
           Object.keys(izone.generators),
-        ].flat()
-      )
+        ].flat(),
+      ),
     )
       .filter(hasDefaultValue)
-      .map((key) => [
-        generators[key],
-        getGeneratorValue(
-          parseInt(key),
-          izone,
-          pzone.instrument,
-          pzone,
-          preset
-        ),
-      ])
+      .map((key) => [generators[key], getGeneratorValue(parseInt(key), izone, pzone.instrument, pzone, preset)]),
   );
 };

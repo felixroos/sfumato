@@ -1,16 +1,12 @@
-import { SoundFont2 } from "soundfont2";
-import "./dsp";
-import {
-  generators,
-  getGeneratorValue,
-  getGeneratorValues,
-} from "./generators";
-import { Instrument, InstrumentZone, Preset, PresetZone } from "./types.d";
-import { normalizePermille, tc2s } from "./util";
+import { SoundFont2 } from 'soundfont2';
+import './dsp';
+import { generators, getGeneratorValue, getGeneratorValues } from './generators';
+import { Instrument, InstrumentZone, Preset, PresetZone } from './types.d';
+import { normalizePermille, tc2s } from './util';
 
-export * from "./dsp";
-export * from "./generators";
-export * from "./util";
+export * from './dsp';
+export * from './generators';
+export * from './util';
 
 export async function loadSoundfont(url) {
   // load some sf2 file into an array buffer:
@@ -23,8 +19,8 @@ export async function loadSoundfont(url) {
 }
 
 export function applyOptions(ctx, source, options) {
+  let { time = ctx.currentTime } = options;
   const {
-    time = ctx.currentTime,
     midi,
     start,
     velocity = 0.3,
@@ -51,10 +47,7 @@ export function applyOptions(ctx, source, options) {
     ...rest
   } = options;
   // console.log('options', options);
-  const rootKey =
-    overridingRootKey !== undefined && overridingRootKey !== -1
-      ? overridingRootKey
-      : originalPitch;
+  const rootKey = overridingRootKey !== undefined && overridingRootKey !== -1 ? overridingRootKey : originalPitch;
 
   // const baseDetune = 100 * rootKey + pitchCorrection - fineTune;
   const baseDetune = 100 * rootKey + pitchCorrection - fineTune;
@@ -68,10 +61,8 @@ export function applyOptions(ctx, source, options) {
   const playbackRate = 1.0 * Math.pow(2, cents / 1200);
   // console.log('playbackRate', playbackRate);
   source.playbackRate.value = playbackRate;
-  const loopStart =
-    startLoop + startloopAddrsOffset + startloopAddrsCoarseOffset * 32768;
-  const loopEnd =
-    endLoop + endloopAddrsOffset + endloopAddrsCoarseOffset * 32768;
+  const loopStart = startLoop + startloopAddrsOffset + startloopAddrsCoarseOffset * 32768;
+  const loopEnd = endLoop + endloopAddrsOffset + endloopAddrsCoarseOffset * 32768;
   /*   console.log('loopStart', loopStart);
   console.log('loopEnd', loopEnd); */
   if (loopEnd > loopStart && sampleModes === 1) {
@@ -79,11 +70,11 @@ export function applyOptions(ctx, source, options) {
     source.loopEnd = loopEnd / sampleRate;
     source.loop = true;
   } else if (sampleModes === 3) {
-    console.warn("unimplemented sampleMode 3 (play till end on note off)");
+    console.warn('unimplemented sampleMode 3 (play till end on note off)');
   }
   // type === sampleModes ?
   const unimplemented = Object.keys(rest).filter(
-    (k) => !["name", "instrument", "keyRange", "sampleID", "end"].includes(k)
+    (k) => !['name', 'instrument', 'keyRange', 'sampleID', 'end'].includes(k),
   );
   if (unimplemented.length) {
     /*     console.warn(
@@ -92,7 +83,6 @@ export function applyOptions(ctx, source, options) {
     ); */
   }
   const vol = ctx.createGain();
-  source.connect(vol);
   const volEnv = [
     time,
     0,
@@ -105,12 +95,13 @@ export function applyOptions(ctx, source, options) {
     sustainVolEnv >= 960 ? 0 : 1 - normalizePermille(sustainVolEnv),
     tc2s(releaseVolEnv),
   ];
-  source.start(time);
   const release = vol.gain.dahdsr(...volEnv);
   const panner = ctx.createStereoPanner();
   panner.pan.value = pan / 1000;
   vol.connect(panner);
+  source.connect(vol);
   panner.connect(ctx.destination);
+  source.start(time);
 
   return (end = ctx.currentTime) => {
     source.stop(end + tc2s(releaseVolEnv));
@@ -134,46 +125,35 @@ export function getBufferSourceFromSample(ctx, sample, options = {}) {
   return applyOptions(ctx, source, options);
 }
 
-export const startSample = (
-  ctx,
-  sample,
-  midi,
-  time = ctx.currentTime,
-  options
-) => {
-  console.log("midi", midi);
+/* export const startSample = (ctx, sample, midi, time = ctx.currentTime, options) => {
+  console.log('midi', midi);
   return getBufferSourceFromSample(ctx, sample, {
     ...options,
     time,
     midi,
   });
-};
+}; */
 
 export function readableGenerators(unreadable) {
   return Object.fromEntries(
     Object.entries(unreadable).map(([key, value]: any) => {
       const name = generators[key];
-      if (["keyRange", "velRange"].includes(name)) {
+      if (['keyRange', 'velRange'].includes(name)) {
         return [name, value.range];
       }
       return [name, value.value];
-    })
+    }),
   );
 }
 export const isActiveZone = (zone: PresetZone | InstrumentZone, midi: number) =>
   !zone.keyRange || (zone.keyRange.lo <= midi && midi <= zone.keyRange.hi);
 
-export const mergeGenerators = (
-  preset: Preset,
-  instrument: Instrument,
-  izone: InstrumentZone,
-  pzone: PresetZone
-) => {
+export const mergeGenerators = (preset: Preset, instrument: Instrument, izone: InstrumentZone, pzone: PresetZone) => {
   Object.fromEntries(
     Object.entries(generators).map(([index, key]) => [
       key,
       getGeneratorValue(parseInt(index), izone, instrument, pzone, preset),
-    ])
+    ]),
   );
 };
 
@@ -186,7 +166,7 @@ export const getActiveZones = (preset: Preset, midi) => {
         .filter((izone) => isActiveZone(izone, midi))
         .map((izone) => {
           const mergedGenerators = getGeneratorValues(izone, pzone, preset);
-          // console.log("generators", mergedGenerators);
+          // console.log('generators', mergedGenerators);
           return {
             ...izone,
             mergedGenerators: mergedGenerators,
@@ -200,13 +180,13 @@ export const getActiveZones = (preset: Preset, midi) => {
 
 export const startPresetNote = (ctx, preset, midi, time = ctx.currentTime) => {
   const zones = getActiveZones(preset, midi);
-  // console.log('start zones', zones);
+  // console.log('start zones', time, ctx.currentTime);
   const releases = zones.map((zone) =>
     getBufferSourceFromSample(ctx, zone.sample, {
       ...zone.mergedGenerators,
       midi,
       time,
-    })
+    }),
   );
   // console.log('sources', sources);
   return (end = ctx.currentTime) => {
