@@ -2,21 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { loadSoundfont, startPresetNote } from "../../src";
 import { toMidi } from "../../src/util";
 import Claviature from "./Claviature";
-import { WebMidi } from "webmidi";
-import useWebMidi from "./useWebMidi";
 import useMidiInput from "./useMidiInput";
-
-WebMidi.enable()
-  .then(() => {
-    const inputs = Array.from(WebMidi.inputs);
-    const outputs = Array.from(WebMidi.outputs);
-    console.log(
-      "WebMidi enabled!",
-      inputs.map((input) => input.name),
-      outputs.map((output) => output.name)
-    );
-  })
-  .catch((err) => alert(err));
+import useWebMidi from "./useWebMidi";
 
 const fonts = [
   "Donkey Kong Country 2014",
@@ -31,12 +18,16 @@ function App() {
   const [name, setName] = useState(fonts[0]);
   const [loaded, setLoaded] = useState<any>();
   const [presetIndex, setPresetIndex] = useState(0);
+  const [midiInput, setMidiInput] = useState(0);
 
   const [clickedNote, setClickedNote] = useState<number>();
 
   const stopHandles = useRef<any[]>([]);
+  const webmidi = useWebMidi();
+  const midiInputs = Array.from(webmidi?.inputs || []);
+
   const { activeNotes } = useMidiInput({
-    index: 0,
+    index: midiInput,
     channel: 1,
     noteOn: (e) => {
       if (loaded?.presets?.length) {
@@ -78,15 +69,28 @@ function App() {
           sfumato github repo
         </a>
       </p>
-      <select
-        className="bg-slate-500 text-white p-4 text-xl"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      >
-        {fonts.map((font) => (
-          <option key={font}>{font}</option>
-        ))}
-      </select>
+      <nav className="space-x-4">
+        <select
+          className="bg-slate-500 text-white p-4 text-xl rounded"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        >
+          {fonts.map((font) => (
+            <option key={font}>{font}</option>
+          ))}
+        </select>
+        <select
+          className="bg-slate-500 text-white p-4 text-xl rounded"
+          value={midiInput}
+          onChange={(e) => setMidiInput(parseInt(e.target.value))}
+        >
+          {midiInputs.map((input, i) => (
+            <option key={input.id} value={i}>
+              {input.name}
+            </option>
+          ))}
+        </select>
+      </nav>
       <Claviature
         onClick={(midi) => {
           console.log("clickkk");

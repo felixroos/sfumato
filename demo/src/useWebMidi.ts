@@ -6,7 +6,6 @@ let enablePromise;
 function useWebMidi(onLoad?: (webmidi: typeof WebMidi) => void) {
   const [webmidi, setWebmidi] = useState<typeof WebMidi>();
   useEffect(() => {
-    console.log("enable webmidi");
     // make sure enable is only called once..
     enablePromise = enablePromise || WebMidi.enable();
     enablePromise
