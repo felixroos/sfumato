@@ -11,6 +11,7 @@ function useWebMidi(onLoad?: (webmidi: typeof WebMidi) => void) {
     enablePromise
       .then(() => {
         onLoad?.(WebMidi);
+        // globalThis.WebMidi = WebMidi;
         setWebmidi(WebMidi);
       })
       .catch((err) => alert(err));
