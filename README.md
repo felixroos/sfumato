@@ -12,4 +12,5 @@ It's still a work in progress! Roadmap will follow soon
 
 - [DEMO](https://felixroos.github.io/sfumato/)
 - [GitHub](https://github.com/felixroos/sfumato)
-- [Blog Post](https://loophole-letters.vercel.app/soundfonts)
+- [Blog Post](https://loophole-letters.vercel.app/soundfonts) (draft)
+- [Usage with Strudel](https://strudel.tidalcycles.org/?u7qAdlwp3Qig)
