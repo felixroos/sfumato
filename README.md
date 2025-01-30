@@ -36,3 +36,4 @@ import { loadSoundfont, startPresetNote } from 'sfumato';
 - [GitHub](https://github.com/felixroos/sfumato)
 - [Blog Post](https://loophole-letters.vercel.app/soundfonts) (draft)
 - [Usage with Strudel](https://strudel.tidalcycles.org/?u7qAdlwp3Qig)
+- [Minimal vanilla JS app example](https://github.com/urswilke/sf2_minimal)
