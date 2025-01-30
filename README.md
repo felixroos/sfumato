@@ -6,7 +6,7 @@ This library is able to play soundfonts (sf2 files) with the Web Audio API.
 
 ## Status
 
-It's still a work in progress! Roadmap will follow soon
+It's still a work in progress! There might be a roadmap at some point in the future
 
 ## Installation
 
